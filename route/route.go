@@ -8,7 +8,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetupRoutes(app *fiber.App, cfg *config.Config, authService service.AuthService) {
+func SetupRoutes(
+	app *fiber.App,
+	cfg *config.Config,
+	authService service.AuthService,
+	customerService service.CustomerService,
+) {
 	api := app.Group("/api/v1")
 
 	// Public Health Check
@@ -37,5 +42,11 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authService service.AuthSer
 	_ = protected.Group("/owner", middleware.RequireRole("owner"))
 
 	// Business Scoped Endpoints (Role Guard: owner & cashier)
-	_ = protected.Group("/pos", middleware.RequireRole("owner", "cashier"))
+	pos := protected.Group("/pos", middleware.RequireRole("owner", "cashier"))
+	if customerService != nil {
+		pos.Get("/customers", customerService.FindAll)
+		pos.Post("/customers", customerService.Create)
+		pos.Get("/customers/:id", customerService.FindByID)
+		pos.Put("/customers/:id", customerService.Update)
+	}
 }
