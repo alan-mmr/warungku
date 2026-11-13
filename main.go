@@ -31,10 +31,18 @@ func main() {
 	// 3. Initialize Repositories
 	userRepo := repository.NewUserRepository(dbPool)
 	customerRepo := repository.NewCustomerRepository(dbPool)
+	txRepo := repository.NewTransactionRepository(dbPool)
+	debtRepo := repository.NewDebtRepository(dbPool)
+	expenseRepo := repository.NewExpenseRepository(dbPool)
+	reportRepo := repository.NewReportRepository(dbPool)
 
 	// 4. Initialize Services
 	authService := service.NewAuthService(userRepo, cfg.JWTSecret, cfg.JWTAccessExpMinutes)
 	customerService := service.NewCustomerService(customerRepo)
+	txService := service.NewTransactionService(txRepo)
+	debtService := service.NewDebtService(debtRepo)
+	expenseService := service.NewExpenseService(expenseRepo)
+	reportService := service.NewReportService(reportRepo)
 
 	// 5. Initialize Fiber App & Middleware
 	app := fiber.New(fiber.Config{
@@ -46,7 +54,7 @@ func main() {
 	app.Use(cors.New())
 
 	// 6. Setup Routes
-	route.SetupRoutes(app, cfg, authService, customerService)
+	route.SetupRoutes(app, cfg, authService, customerService, txService, debtService, expenseService, reportService)
 
 	// 7. Start Server
 	log.Printf("[READY] %s backend running on port :%s\n", cfg.AppName, cfg.AppPort)
