@@ -6,6 +6,7 @@ type Product struct {
 	ID          string           `json:"id"`
 	BusinessID  string           `json:"business_id"`
 	CategoryID  *string          `json:"category_id,omitempty"`
+	CategoryName *string         `json:"category_name,omitempty"`
 	Name        string           `json:"name"`
 	SKU         *string          `json:"sku,omitempty"`
 	Unit        string           `json:"unit"`
@@ -38,4 +39,20 @@ type CreateProductRequest struct {
 	TrackStock bool    `json:"track_stock"`
 	Stock      float64 `json:"stock"`
 	MinStock   float64 `json:"min_stock"`
+}
+
+type UpdateProductRequest struct {
+	CategoryID *string `json:"category_id"`
+	Name       string  `json:"name"`
+	SKU        *string `json:"sku"`
+	Unit       string  `json:"unit"`
+	Price      float64 `json:"price"`
+	CostPrice  float64 `json:"cost_price"`
+	TrackStock bool    `json:"track_stock"`
+	MinStock   float64 `json:"min_stock"`
+}
+
+type CreateVariantRequest struct {
+	Name       string  `json:"name"`
+	ExtraPrice float64 `json:"extra_price"`
 }
