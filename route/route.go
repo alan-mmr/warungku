@@ -8,7 +8,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetupRoutes(app *fiber.App, cfg *config.Config, authService service.AuthService) {
+func SetupRoutes(
+	app *fiber.App,
+	cfg *config.Config,
+	authService service.AuthService,
+	categoryService service.CategoryService,
+	productService service.ProductService,
+	stockService service.StockService,
+) {
 	api := app.Group("/api/v1")
 
 	// Public Health Check
@@ -34,8 +41,35 @@ func SetupRoutes(app *fiber.App, cfg *config.Config, authService service.AuthSer
 	_ = protected.Group("/admin", middleware.RequireRole("admin"))
 
 	// Owner Only Endpoints (Role Guard: owner only)
-	_ = protected.Group("/owner", middleware.RequireRole("owner"))
+	owner := protected.Group("/owner", middleware.RequireRole("owner"))
+	if categoryService != nil {
+		owner.Post("/categories", categoryService.Create)
+		owner.Put("/categories/:id", categoryService.Update)
+		owner.Delete("/categories/:id", categoryService.Delete)
+	}
+	if productService != nil {
+		owner.Post("/products", productService.Create)
+		owner.Put("/products/:id", productService.Update)
+		owner.Delete("/products/:id", productService.Delete)
+		owner.Post("/products/:id/variants", productService.CreateVariant)
+	}
+	if stockService != nil {
+		owner.Get("/stock/movements", stockService.GetMovements)
+		owner.Post("/stock/in", stockService.StockIn)
+		owner.Post("/stock/adjust", stockService.StockAdjust)
+	}
 
 	// Business Scoped Endpoints (Role Guard: owner & cashier)
-	_ = protected.Group("/pos", middleware.RequireRole("owner", "cashier"))
+	pos := protected.Group("/pos", middleware.RequireRole("owner", "cashier"))
+	if categoryService != nil {
+		pos.Get("/categories", categoryService.FindAll)
+		pos.Get("/categories/:id", categoryService.FindByID)
+	}
+	if productService != nil {
+		pos.Get("/products", productService.FindAll)
+		pos.Get("/products/:id", productService.FindByID)
+	}
+	if stockService != nil {
+		pos.Get("/stock/low", stockService.GetLowStock)
+	}
 }
