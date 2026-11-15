@@ -140,13 +140,13 @@ erDiagram
 
 ---
 
-## 👥 6. Pembagian Modul & Alur Git Master (3 Anggota)
+## 👥 6. Tim Pengembang & Pembagian Modul (3 Anggota)
 
-| Anggota Tim | Branch Fitur | Tanggung Jawab Modul |
-|---|---|---|
-| **Anggota 1 (Git Master)** | `main` & `feature/auth-employee` | Fondasi Clean Architecture, Auth JWT, Manajemen Usaha & Pegawai, Review & Merge Pull Request. |
-| **Anggota 2** | `feature/catalog-stock` | Manajemen Kategori, Produk, Varian Harga, dan Pergerakan Stok (Stok Masuk & Opname). |
-| **Anggota 3** | `feature/transaction-report` | Transaksi Kasir Atomik (Checkout potong stok), Manajemen Utang Pelanggan, dan Laporan Keuangan. |
+| No | Nama Anggota | NIM | Branch Git | Tanggung Jawab Modul |
+|:--:|---|:--:|---|---|
+| 1 | **Muhamad Maulana Rizki** *(Git Master)* | 434241116 | `main` & `feature/auth-employee` | Fondasi Clean Architecture, Auth JWT, Manajemen Usaha & Pegawai, Review & Merge Pull Request. |
+| 2 | **Rafi Hariman Priambodo** | 434241112 | `feature/transaction-report` | Transaksi Kasir Atomik (Checkout potong stok), Piutang Pelanggan & Cicilan, Pengeluaran Toko, dan Laporan Keuangan Dinamis. |
+| 3 | **Aditya Alif Santoso** | 434241115 | `feature/catalog-stock` | Manajemen Kategori Produk, Master Katalog & Varian Harga, Stok Masuk Belanja, Stok Opname, dan Peringatan Stok Menipis. |
 
 ---
 
