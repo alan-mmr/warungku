@@ -12,6 +12,9 @@ func SetupRoutes(
 	app *fiber.App,
 	cfg *config.Config,
 	authService service.AuthService,
+	categoryService service.CategoryService,
+	productService service.ProductService,
+	stockService service.StockService,
 	customerService service.CustomerService,
 	txService service.TransactionService,
 	debtService service.DebtService,
@@ -44,6 +47,22 @@ func SetupRoutes(
 
 	// Owner Only Endpoints (Role Guard: owner only)
 	owner := protected.Group("/owner", middleware.RequireRole("owner"))
+	if categoryService != nil {
+		owner.Post("/categories", categoryService.Create)
+		owner.Put("/categories/:id", categoryService.Update)
+		owner.Delete("/categories/:id", categoryService.Delete)
+	}
+	if productService != nil {
+		owner.Post("/products", productService.Create)
+		owner.Put("/products/:id", productService.Update)
+		owner.Delete("/products/:id", productService.Delete)
+		owner.Post("/products/:id/variants", productService.CreateVariant)
+	}
+	if stockService != nil {
+		owner.Get("/stock/movements", stockService.GetMovements)
+		owner.Post("/stock/in", stockService.StockIn)
+		owner.Post("/stock/adjust", stockService.StockAdjust)
+	}
 	if txService != nil {
 		owner.Post("/transactions/:id/void", txService.Void)
 	}
@@ -61,6 +80,17 @@ func SetupRoutes(
 
 	// Business Scoped Endpoints (Role Guard: owner & cashier)
 	pos := protected.Group("/pos", middleware.RequireRole("owner", "cashier"))
+	if categoryService != nil {
+		pos.Get("/categories", categoryService.FindAll)
+		pos.Get("/categories/:id", categoryService.FindByID)
+	}
+	if productService != nil {
+		pos.Get("/products", productService.FindAll)
+		pos.Get("/products/:id", productService.FindByID)
+	}
+	if stockService != nil {
+		pos.Get("/stock/low", stockService.GetLowStock)
+	}
 	if customerService != nil {
 		pos.Get("/customers", customerService.FindAll)
 		pos.Post("/customers", customerService.Create)

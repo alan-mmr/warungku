@@ -30,6 +30,9 @@ func main() {
 
 	// 3. Initialize Repositories
 	userRepo := repository.NewUserRepository(dbPool)
+	categoryRepo := repository.NewCategoryRepository(dbPool)
+	productRepo := repository.NewProductRepository(dbPool)
+	stockRepo := repository.NewStockRepository(dbPool)
 	customerRepo := repository.NewCustomerRepository(dbPool)
 	txRepo := repository.NewTransactionRepository(dbPool)
 	debtRepo := repository.NewDebtRepository(dbPool)
@@ -38,6 +41,9 @@ func main() {
 
 	// 4. Initialize Services
 	authService := service.NewAuthService(userRepo, cfg.JWTSecret, cfg.JWTAccessExpMinutes)
+	categoryService := service.NewCategoryService(categoryRepo)
+	productService := service.NewProductService(productRepo)
+	stockService := service.NewStockService(stockRepo)
 	customerService := service.NewCustomerService(customerRepo)
 	txService := service.NewTransactionService(txRepo)
 	debtService := service.NewDebtService(debtRepo)
@@ -54,7 +60,19 @@ func main() {
 	app.Use(cors.New())
 
 	// 6. Setup Routes
-	route.SetupRoutes(app, cfg, authService, customerService, txService, debtService, expenseService, reportService)
+	route.SetupRoutes(
+		app,
+		cfg,
+		authService,
+		categoryService,
+		productService,
+		stockService,
+		customerService,
+		txService,
+		debtService,
+		expenseService,
+		reportService,
+	)
 
 	// 7. Start Server
 	log.Printf("[READY] %s backend running on port :%s\n", cfg.AppName, cfg.AppPort)
